@@ -1,6 +1,8 @@
 # Import
 
 import random
+import csv
+import unicodedata
 from os import system, name
 
 # Função para limpar a tela a cada execução
@@ -13,6 +15,23 @@ def limpaTela():
     # Mac ou Linux
     else:
         _ = system('clear')
+
+    
+def remover_acentos(texto):
+    texto = unicodedata.normalize('NFD', texto)
+    texto = texto.encode('ascii', 'ignore').decode('utf-8')
+    return texto
+
+# Função para ler o arquivo CSV
+def readfile():
+
+    with open('frutas.csv', 'r', encoding='utf8', newline='') as arquivo:
+        leitor = csv.reader(arquivo)
+        next(leitor)
+
+        frutas = [remover_acentos(linha[0].lower()) for linha in leitor]
+
+    return frutas
 
 
 #  Função que desenha a forca na tela
@@ -110,9 +129,9 @@ def game():
     print("\nBem vindo ao jogo da forca!")
     print ("Adivinhe a palavra abaixo: \n")
 
-    # Lista de Palavras para o jogo
+    # Carrega a lista de Palavras para o jogo
 
-    palavras = ["banana", "abacate", "uva", "morango", "laranja"]
+    palavras = readfile()
 
     # Escolhe randomicamente a palavra
     palavra = random.choice(palavras)
